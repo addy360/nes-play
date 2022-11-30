@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { HttpService } from '@nestjs/axios';
 
 @Injectable()
@@ -9,7 +8,7 @@ export class SchedulesService {
 
     private logger: Logger = new Logger('SchedulesService');
 
-    @Cron('* * * * * *')
+    // @Cron('* * * * * *')
     fetchData() {
         this.http.get('https://jsonplaceholder.typicode.com/posts')
             .subscribe(res => {
@@ -18,7 +17,7 @@ export class SchedulesService {
 
     }
 
-    @Cron('* * * * * *')
+    // @Cron('* * * * * *')
     postData() {
         this.http.get('https://jsonplaceholder.typicode.com/comments')
             .subscribe(res => {
@@ -26,4 +25,5 @@ export class SchedulesService {
             })
 
     }
+
 }

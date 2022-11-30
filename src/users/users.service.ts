@@ -1,29 +1,49 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {Injectable, Logger, OnModuleInit} from '@nestjs/common';
+import {CreateUserDto} from './dto/create-user.dto';
+import {UpdateUserDto} from './dto/update-user.dto';
+import {HttpService} from "@nestjs/axios";
+import {Repository} from "typeorm";
+import {User} from "./entities/user.entity";
+import {InjectRepository} from "@nestjs/typeorm";
 
 @Injectable()
-export class UsersService {
+export class UsersService implements OnModuleInit {
 
-  private logger: Logger = new Logger('UsersService');
+    constructor(private readonly http: HttpService, @InjectRepository(User) private readonly userRepo: Repository<User>) {
+    }
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
+    private logger: Logger = new Logger('UsersService');
 
-  findAll() {
-    return `This action returns all users`;
-  }
+    async create(createUserDto: CreateUserDto): Promise<User> {
+        return this.userRepo.save(createUserDto)
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+    findAll(): Promise<User[]> {
+        return this.userRepo.find();
+    }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+    findOne(id: number): Promise<User> {
+        return this.userRepo.findOne({where: {id}})
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
+    update(id: number, updateUserDto: UpdateUserDto) {
+        return `This action updates a #${id} user`;
+    }
+
+    remove(id: number): Promise<any> {
+        return this.userRepo.delete({id})
+    }
+
+    fetchUsers() {
+        this.http.get<CreateUserDto[]>("https://jsonplaceholder.typicode.com/users")
+            .subscribe(value => {
+                value.data.forEach(user => {
+                    this.create(user)
+                })
+            })
+    }
+
+    onModuleInit(): any {
+        // this.fetchUsers()
+    }
 }
