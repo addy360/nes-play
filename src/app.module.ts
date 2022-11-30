@@ -1,4 +1,4 @@
-import {Module} from '@nestjs/common';
+import {CacheModule, Module} from '@nestjs/common';
 import {AppController} from './app.controller';
 import {AppService} from './app.service';
 import {TasksModule} from './tasks/tasks.module';
@@ -10,7 +10,12 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {User} from "./users/entities/user.entity";
 
 @Module({
-    imports: [TasksModule, UsersModule, ScheduleModule.forRoot(), HttpModule, TypeOrmModule.forRoot({
+    imports: [
+        TasksModule,
+        UsersModule,
+        ScheduleModule.forRoot(),
+        HttpModule,
+        TypeOrmModule.forRoot({
         type:"mysql",
         host:"localhost",
         port:3306,
